@@ -1,14 +1,14 @@
 # Beam64
-**Wireless Modification for N64 Controller**
+### Wireless Modification for N64 Controller  
 
-The N64 protocol is a 
-=======
-**ChangeLog**
 
-Added Arduino code for early testing of communication with N64 controller
+### ChangeLog
+**April 6th 2019:**  
+Added Arduino code for early testing of communication with N64 controller   
+- Able to send command byte 0x00 to controller
+- Able to see that data is being sent back, still need latch it properly
 
-    - Able to send command byte 0x00 to controller
-	- Able to receive data bytes from controller 
+---  
 
 
 References
