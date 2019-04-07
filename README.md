@@ -6,6 +6,7 @@ The N64 protocol is a
 **ChangeLog**
 
 Added Arduino code for early testing of communication with N64 controller
+
     - Able to send command byte 0x00 to controller
 	- Able to receive data bytes from controller 
 
