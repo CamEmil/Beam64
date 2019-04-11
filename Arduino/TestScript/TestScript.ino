@@ -19,26 +19,23 @@ void setup() {
 
 void loop() {
 
-	sendCommand(0x00 , 0x01);
+	sendCommand(0x00, 0x01);
 	collectBytesISR();
 	uint8_t hexData;
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 32; i++) {
+		if (i % 8 == 0) Serial.println();
+		hexData = 0;
 		for (int j = 0; j < 8; j++) {
-			hexData <<= hexData;
-			hexData |= dataArray[i];
+			hexData = hexData << 1;
+			hexData = hexData + dataArray[i * 8 + j];
 		}
-		if (hexData == 0){
-			Serial.print("00");
-		}
-		else if (hexData < 16) {
+		if (hexData < 16) {
 			Serial.print("0");
-		}
-		else {
-
 		}
 		Serial.print(hexData, HEX);
 		Serial.print(" ");
+		
 	}
 	Serial.println();
 
@@ -102,7 +99,7 @@ void collectBytes( char* data, char numBytes ) {
 void collectBytesISR() {
 	uint8_t tempData;
 
-	for (int i = 0; i < 80; i++) {
+	for (int i = 0; i < 256; i++) {
 		dataArray[i] = digitalReadFast(controllerPin);
 	}
 }
