@@ -16,6 +16,10 @@ The goal of this prototyping stage is to:
 ---
 
 ### ChangeLog
+**April 28th, 2019:**
+-- Found a [potential microcomputer](http://www.ti.com/product/CC2541) with bluetooth 4 integrated into the system, plenty of chinese vendors selling it on aliexpress
+-- Discovered that the N64 controller protocol can be approximated with UART, will probably write assembly to do the pin polling instead
+
 **April 11th, 2019:**  
 -- Figured out how to read directly from the digital pin registers  
 
@@ -33,9 +37,11 @@ Added Arduino code for early testing of communication with N64 controller
 References
 
 [N64 Controller Protocol Info 1](http://afermiano.com/index.php/n64-controller-protocol)  
-[N64 Controller Protocol Info 2](https://kthompson.gitlab.io/2016/07/26/n64-controller-protocol.html)  
+[N64 Controller Protocol Info 2](https://kthompson.gitlab.io/2016/07/26/n64-controller-protocol.html) 
+[Project with controller to USB](https://os.mbed.com/users/fomartin/notebook/n64-controller-interface/) 
 [N64 Patent](https://patentimages.storage.googleapis.com/a0/db/08/11d1c70ea3e80b/US6454652.pdf)  
 [Controller Chip Pinout](https://bitbuilt.net/forums/index.php?threads/official-controller-chip-pinout.58/)  
+
 
 
 [Prototype_Block_Diagram]: .\Diagrams\Exports\System_High_Level.png
