@@ -16,7 +16,7 @@ The goal of this prototyping stage is to:
 ---
 
 ### ChangeLog
-**April 28th, 2019:**
+**April 28th, 2019:**  
 -- Found a [potential microcomputer](http://www.ti.com/product/CC2541) with bluetooth 4 integrated into the system, plenty of chinese vendors selling it on aliexpress  
 -- Discovered that the N64 controller protocol can be approximated with UART, will probably write assembly to do the pin polling instead  
 
