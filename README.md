@@ -16,6 +16,11 @@ The goal of this prototyping stage is to:
 ---
 
 ### ChangeLog
+**May 7th, 2019**  
+-- Ordered three bluetooth transcievers for prototyping with arduino  
+-- Wrote a more precise function for sending commands  
+-- Began working on an assembly function to read incoming controller data  
+
 **April 28th, 2019:**  
 -- Found a [potential microcomputer](http://www.ti.com/product/CC2541) with bluetooth 4 integrated into the system, plenty of chinese vendors selling it on aliexpress  
 -- Discovered that the N64 controller protocol can be approximated with UART, will probably write assembly to do the pin polling instead  
@@ -27,9 +32,9 @@ The goal of this prototyping stage is to:
 -- Digging into arduino source code to speed up function calls  
 
 **April 6th, 2019:**  
-Added Arduino code for early testing of communication with N64 controller   
-- Able to send command byte 0x00 to controller
-- Able to see that data is being sent back, still need latch it properly  
+-- Added Arduino code for early testing of communication with N64 controller  
+-- Able to send command byte 0x00 to controller  
+-- Able to see that data is being sent back, still need latch it properly  
 
 ---  
 
@@ -37,10 +42,10 @@ Added Arduino code for early testing of communication with N64 controller
 References
 
 [N64 Controller Protocol Info 1](http://afermiano.com/index.php/n64-controller-protocol)  
-[N64 Controller Protocol Info 2](https://kthompson.gitlab.io/2016/07/26/n64-controller-protocol.html) 
-[Project with controller to USB](https://os.mbed.com/users/fomartin/notebook/n64-controller-interface/) 
+[N64 Controller Protocol Info 2](https://kthompson.gitlab.io/2016/07/26/n64-controller-protocol.html)  
+[Project with controller to USB](https://os.mbed.com/users/fomartin/notebook/n64-controller-interface/)  
 [N64 Patent](https://patentimages.storage.googleapis.com/a0/db/08/11d1c70ea3e80b/US6454652.pdf)  
-[Controller Chip Pinout](https://bitbuilt.net/forums/index.php?threads/official-controller-chip-pinout.58/)  
+[Controller Chip Pinout](https://bitbuilt.net/forums/index.php?threads/official-controller-chip-pinout.58/)   
 
 
 
