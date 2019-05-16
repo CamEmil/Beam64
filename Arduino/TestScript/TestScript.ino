@@ -1,6 +1,11 @@
 char dataArray[32];
 char testDataArray[128];
 
+bool firstBoot;
+int correctResponse = 0;
+int incorrectResponse = 0;
+int loopCounter = 0;
+
 #define BYTE 8
 #define controllerPin 7
 
@@ -44,36 +49,49 @@ void setup() {
 }
 
 void loop() {
-	char goodByte = 0;
-	delay(2000);
+	char byte1 = 0;
+	char byte2 = 0;
+	char byte3 = 0;
+	char byte4 = 0;
 
-	sendCommandStatus();
-	//sendCommand(0x00, 0x01);
-	goodByte = readBytes();
+	//if (loopCounter == 10000) {
+	//	Serial.print("Num Errors: ");
+	//	Serial.println(incorrectResponse);
+	//	Serial.print("Error Rate: ");
+	//	Serial.print((((double)incorrectResponse) / 10000) * 100, 2);
+	//}
 
-	printByte(goodByte);
-
-	/*
-	collectDebugBytes(32);
-	for (int i = 0; i < 32; i++) {
-		
-		if (i % 4 == 0) 
-			Serial.println();
-		
-
-		printByte(testDataArray[i]);
-		Serial.print(" ");
+	if (firstBoot) {
+		delay(2000);
+		firstBoot = false;
 	}
-	*/
+	else {
+		delay(1000);
+	}
+	delay(1000);
+	noInterrupts();
+	//sendCommandStatus();
+	sendCommandPoll();
+	byte1 = readByte();
+	byte2 = readByte();
+	byte3 = readByte();
+	byte4 = readByte();
+	interrupts();
 
-	while (1);
+	printByte(byte1); Serial.print(" ");
+	printByte(byte2); Serial.print(" ");
+	printByte(byte3); Serial.print(" ");
+	printByte(byte4); Serial.println();
 
-	//translateBytes();
-	//Serial.println("Yeet2");
-	uint8_t hexData;
+	//if (byte1 == 0x05 && byte2 == 0x00 && byte3 == 0x02) {
+	//	correctResponse++;
+	//}
+	//else {
+	//	incorrectResponse++;
+	//}
 
-	//Serial.println("hello world");
 
+	loopCounter++;
 }
 
 void sendCommand(char cmd, char ctrReg) {
@@ -153,28 +171,14 @@ void delayThreeMicros() {
 }
 
 
-void collectDebugBytes(int numBytes) {
-	uint8_t tempData = 0;
-
-	for (int j = 0; j < numBytes; j++) {
-		tempData = 0;
-		for (int i = 0; i < 8; i++) {
-			tempData <<= 1;
-			tempData |= PIN_7_READ;
-		}
-		testDataArray[j] = tempData;
-	}
-}
-
 void printByte(char data) {
 	for (int i = 0; i < 8; i++) {
-		Serial.print(data & 1);
-		data >>= 1;
+		Serial.print((data & 0x80) && 1);
+		data <<= 1;
 	}
 }
 
 void sendCommandStatus() {
-	noInterrupts();
 	PIN_7_OUTPUT;
 	PIN_7_HIGH;
 
@@ -190,42 +194,75 @@ void sendCommandStatus() {
 
 	PIN_7_INPUT;
 	PIN_7_HIGH;
-	interrupts();
+}
+
+void sendCommandPoll() {
+	PIN_7_OUTPUT;
+	PIN_7_HIGH;
+
+	SEND_ZERO;
+	SEND_ZERO;
+	SEND_ZERO;
+	SEND_ZERO;
+	SEND_ZERO;
+	SEND_ZERO;
+	SEND_ZERO;
+	SEND_ONE;
+	SEND_STOP_BIT;
+
+	PIN_7_INPUT;
+	PIN_7_HIGH;
 }
 
 
-char readBytes() {
-	char readByte;
+char readByte() {
+	
+	char* byte = 0x00;
 	// r20-27 are scratch
 	// put byte result in 
 	// r20 is counter for delay
 	// r21 is counter for each bit
+
 	__asm__(
-		"testPortD:			\n"
 		"ldi r21, 8			\n"
-		"sbis 9, 7  	\n"
-		"rjmp delay			\n"
+	"waitforlow:			\n"
+		"sbic 9, 7  		\n"
+		"rjmp waitforlow	\n"
+
+		"ldi r20, 8			\n"
+	"wait32cycles:			\n"
 		"nop				\n"
-		"rjmp testPortD		\n"
-     "resetcounter:			\n"
-		"ldi r20, 16		\n"
-     "delay:				\n"
 		"dec r20			\n"
 		"cpi r20, 0			\n"
-		"brne delay			\n"
-		"sbis 9, 7  	\n"
-		"rjmp getout		\n"
-		"nop				\n"
-		"inc r0				\n"
-     "getout:				\n"
+		"brne wait32cycles	\n"
+
 		"lsl r0				\n"
+		"sbis 9, 7  		\n"
+		"rjmp waitforhigh	\n"
+		"inc r0				\n"
+		"rjmp deccounter	\n"
+
+	"waitforhigh:			\n"
+		"sbis 9, 7			\n"
+		"rjmp waitforhigh	\n"
+
+	"deccounter:			\n"
 		"dec r21			\n"
 		"cpi r21, 0			\n"
-		"brne resetcounter	\n\t"
+		"brne waitforlow	\n\t"
+
 	);
 
-	return readByte;
+	return *byte;
 }
 
 // "sbis 11, 7  		\n"
 // "sbis 11, 7  		\n"
+/*
+		"nop				\n"
+		"nop				\n"
+		"nop				\n"
+		"nop				\n"
+
+
+*/

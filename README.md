@@ -4,11 +4,15 @@ The goal of Beam64 is to permanently modify an N64 controller to wirelessly comm
 
 **This modification is currently in the prototyping stage.**  
 The goal of this prototyping stage is to:  
-1. Fully understand the N64 Controller communication protocol
-2. Explore bluetooth as a method for transmitting controller data wirelessly
-3. Determine if latency will be an issue
-4. Is arduino fast enough at 16MHZ to sample the incoming data?
-5. Have fun!
+1. Fully understand the N64 Controller communication protocol  
+2. Explore bluetooth as a method for transmitting controller data wirelessly  
+3. Determine if latency will be an issue  
+4. Is arduino fast enough at 16MHZ to sample the incoming data?  
+    - The atmega328p is a RISC, where most instructions take 1 clock cycle (62.5ns) to complete  
+    - A synchronizer is used to avoid metastability at the digital input pins, this delays the signal by 2 clocks at most
+	- The AVR assembler provides the sbic and sbis instructions for checking pin bits in one clock  
+	- All of this combined means we can carefully write an assemly function to wait for the controller pin to go low, then sample the pin at the correct times to read the controller data or console command  
+5. Have fun!  
 
 
 
@@ -16,6 +20,12 @@ The goal of this prototyping stage is to:
 ---
 
 ### ChangeLog
+
+**May 15th, 2019**  
+-- Completed the assembly function to read an incoming byte  
+-- Began work on a library to hold the functions for communicating with the controller and console  
+-- Code is still very messy  
+
 **May 7th, 2019**  
 -- Ordered three bluetooth transcievers for prototyping with arduino  
 -- Wrote a more precise function for sending commands  
