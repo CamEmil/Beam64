@@ -10,6 +10,8 @@ if (ARDUINO >= 100)
 
 class Beam64Lib {
 	public:
+		char pin;
+
 		Beam64Lib(char pin, bool displayContext=false);
 
 		char readByte();

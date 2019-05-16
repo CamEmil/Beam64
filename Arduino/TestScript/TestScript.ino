@@ -68,7 +68,7 @@ void loop() {
 	else {
 		delay(1000);
 	}
-	delay(1000);
+
 	noInterrupts();
 	//sendCommandStatus();
 	sendCommandPoll();
