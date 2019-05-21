@@ -20,6 +20,12 @@ The goal of this prototyping stage is to:
 ---
 
 ### ChangeLog
+**May 21st, 2019**  
+-- Completed and tested functions for:  
+    -- Requesting controller data and reading it into memory  
+	-- Reading command bytes from the N64 and responding with appropriate response  
+-- Moved functions that handle communication to a Beam64 library  
+-- Set up two bluetooth modules (hc-05) as master and slave and confirmed data transfer works  
 
 **May 15th, 2019**  
 -- Completed the assembly function to read an incoming byte  
@@ -57,6 +63,3 @@ References
 [N64 Patent](https://patentimages.storage.googleapis.com/a0/db/08/11d1c70ea3e80b/US6454652.pdf)  
 [Controller Chip Pinout](https://bitbuilt.net/forums/index.php?threads/official-controller-chip-pinout.58/)   
 
-
-
-[Prototype_Block_Diagram]: .\Diagrams\Exports\System_High_Level.png
