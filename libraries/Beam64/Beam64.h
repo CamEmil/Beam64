@@ -33,6 +33,7 @@ class Beam64 {
 		Beam64(char pin, bool displayContext=false);
 		char readByte();
 		char readCommand();
+		char readCommand7Bits();
 		void writeByte(unsigned char data);
 		void writeByteStop(unsigned char data);
 

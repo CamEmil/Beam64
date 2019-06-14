@@ -4,10 +4,8 @@
 
 
 /*
-*	Pin must be pin 7
-*	Ensure interrupts are disabled 
-*
-*
+*	Controller is pin 7
+*	Console is pin 3
 *
 */
 
@@ -17,6 +15,10 @@ Beam64::Beam64(char pin, bool displayContext) {
 	// _pin is one-hot representation of the pin number for port register manipulation
 	_pin = (1 << pin);
 }
+
+/* NOTE
+	
+*/
 
 char Beam64::readCommand() {
 	setPinIn();
@@ -31,7 +33,7 @@ char Beam64::readCommand() {
 	__asm__(
 		"ldi r21, 8			\n"
 	"waitforlow:		\n"
-		"sbic 9, 7  		\n"
+		"sbic 9, 3  		\n"
 		"rjmp waitforlow	\n"
 
 		"ldi r20, 6			\n"
@@ -42,13 +44,13 @@ char Beam64::readCommand() {
 		"brne wait24cycles	\n"
 
 		"lsl r0				\n"
-		"sbis 9, 7  		\n"
+		"sbis 9, 3  		\n"
 		"rjmp waitforhigh	\n"
 		"inc r0				\n"
 		"rjmp deccounter	\n"
 
 	"waitforhigh:			\n"
-		"sbis 9, 7			\n"
+		"sbis 9, 3			\n"
 		"rjmp waitforhigh	\n"
 
 	"deccounter:		\n"
@@ -59,6 +61,56 @@ char Beam64::readCommand() {
 		"ldi r20, 9			\n"
 	"wait10cycles:			\n"
 		"nop				\n"	
+		"dec r20			\n"
+		"cpi r20, 0			\n"
+		"brne wait10cycles	\n\t"
+
+	);
+
+	return *byte;
+}
+
+char Beam64::readCommand7Bits() {
+	setPinIn();
+	char* byte = 0x00;
+
+	// r20-27 are scratch
+	// put byte result in 
+	// r20 is counter for delay
+	// r21 is counter for each bit
+	// put pin number into r22
+
+	__asm__(
+		"ldi r21, 7			\n"
+		"waitforlow:		\n"
+		"sbic 9, 3  		\n"
+		"rjmp waitforlow	\n"
+
+		"ldi r20, 6			\n"
+		"wait24cycles:		\n"
+		"nop				\n"
+		"dec r20			\n"
+		"cpi r20, 0			\n"
+		"brne wait24cycles	\n"
+
+		"lsl r0				\n"
+		"sbis 9, 3  		\n"
+		"rjmp waitforhigh	\n"
+		"inc r0				\n"
+		"rjmp deccounter	\n"
+
+		"waitforhigh:			\n"
+		"sbis 9, 3			\n"
+		"rjmp waitforhigh	\n"
+
+		"deccounter:		\n"
+		"dec r21			\n"
+		"cpi r21, 0			\n"
+		"brne waitforlow	\n"
+
+		"ldi r20, 9			\n"
+		"wait10cycles:			\n"
+		"nop				\n"
 		"dec r20			\n"
 		"cpi r20, 0			\n"
 		"brne wait10cycles	\n\t"
@@ -126,10 +178,10 @@ void Beam64::writeByte(unsigned char data) {
 	__asm__(
 		"ldi r21, 8			\n"
 	"waitforstart:			\n"
-		"sbis 9, 7  		\n"
+		"sbis 9, 3  		\n"
 		"rjmp waitforstart	\n"
 	"startofbit:			\n"	
-		"cbi 11, 7			\n"
+		"cbi 11, 3			\n"
 
 		"ldi r20, 4			\n"
 	"wait16cycles:			\n"
@@ -138,7 +190,7 @@ void Beam64::writeByte(unsigned char data) {
 		"brne wait16cycles	\n"
 		
 		"sbrc r16, 7  		\n"
-		"sbi 11, 7			\n"
+		"sbi 11, 3			\n"
 		"nop				\n"	
 		"ldi r20, 7			\n"
 	"wait32cycles:			\n"
@@ -147,7 +199,7 @@ void Beam64::writeByte(unsigned char data) {
 		"brne wait32cycles	\n"
 
 		"sbrs r16, 7  		\n"
-		"sbi 11, 7			\n"
+		"sbi 11, 3			\n"
 		"lsl r16			\n"
 
 		"ldi r20, 2			\n"
@@ -181,10 +233,10 @@ void Beam64::writeByteStop(unsigned char data) {
 	__asm__(
 		"ldi r21, 8			\n"
 	"waitforstart1:			\n"
-		"sbis 9, 7  		\n"
+		"sbis 9, 3  		\n"
 		"rjmp waitforstart1	\n"
 	"startofbit1:			\n"
-		"cbi 11, 7			\n"
+		"cbi 11, 3			\n"
 
 		"ldi r20, 4			\n"
 	"wait16cycles1:			\n"
@@ -193,7 +245,7 @@ void Beam64::writeByteStop(unsigned char data) {
 		"brne wait16cycles1	\n"
 
 		"sbrc r16, 7  		\n"
-		"sbi 11, 7			\n"
+		"sbi 11, 3			\n"
 		"nop				\n"
 		"ldi r20, 7			\n"
 	"wait32cycles1:			\n"
@@ -202,7 +254,7 @@ void Beam64::writeByteStop(unsigned char data) {
 		"brne wait32cycles1	\n"
 
 		"sbrs r16, 7  		\n"
-		"sbi 11, 7			\n"
+		"sbi 11, 3			\n"
 		"lsl r16			\n"
 
 		"ldi r20, 2			\n"
@@ -215,7 +267,7 @@ void Beam64::writeByteStop(unsigned char data) {
 		"cpi r21, 0			\n"
 		"brne startofbit1	\n"
 
-		"cbi 11, 7			\n"
+		"cbi 11, 3			\n"
 		"ldi r20, 6			\n"
 	"wait21:			\n"
 		"nop				\n"
@@ -223,7 +275,7 @@ void Beam64::writeByteStop(unsigned char data) {
 		"cpi r20, 0			\n"
 		"brne wait21			\n"
 
-		"sbi 11, 7			\n\t"
+		"sbi 11, 3			\n\t"
 
 	);
 
@@ -266,7 +318,7 @@ void Beam64::sendCommandPoll() {
 	sendStop();
 
 	setPinIn();
-	writePinHigh();
+	//writePinHigh();
 }
 
 void Beam64::delayOneMicro() {

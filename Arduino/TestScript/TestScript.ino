@@ -30,8 +30,6 @@ void setup() {
 
 void loop() {
 	
-	bluetoothTestCode();
-
 	if (firstBoot) {
 		delay(2000);
 		firstBoot = false;
@@ -116,16 +114,4 @@ void whatRegister(unsigned char byte) {
 	char funny = *regPointer;
 
 	Serial.println(byte, HEX);
-}
-
-void bluetoothTestCode() {
-	if (BTserial.available()) {
-		btData = BTserial.read();
-		Serial.write(btData);
-	}
-
-	if (Serial.available()) {
-		btData = Serial.read();
-		BTserial.write(btData);
-	}
 }

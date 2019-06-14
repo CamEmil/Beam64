@@ -1,61 +1,41 @@
 # Beam64
-### Wireless Modification for N64 Controller  
-The goal of Beam64 is to permanently modify an N64 controller to wirelessly communicate with an N64 console with latency that is undetectable by humans.  
+## Wireless N64 Controller Modification
+_**This project and document is a work in progress**_   
+Goal:  
+Permanently modify an N64 controller to wirelessly communicate with no significant impact due to latency  
 
-**This modification is currently in the prototyping stage.**  
-The goal of this prototyping stage is to:  
+
+### Prototype 1 (complete)
+#### Goals  
 1. Fully understand the N64 Controller communication protocol  
-2. Explore bluetooth as a method for transmitting controller data wirelessly  
+2. Explore bluetooth as a method for transmitting controller data wirelessly   
 3. Determine if latency will be an issue  
-4. Is arduino fast enough at 16MHZ to sample the incoming data?  
-    - The atmega328p is a RISC, where most instructions take 1 clock cycle (62.5ns) to complete  
-    - A synchronizer is used to avoid metastability at the digital input pins, this delays the signal by 2 clocks at most
-	- The AVR assembler provides the sbic and sbis instructions for checking pin bits in one clock  
-	- All of this combined means we can carefully write an assemly function to wait for the controller pin to go low, then sample the pin at the correct times to read the controller data or console command  
-5. Have fun!  
+4. Determine if the Arduino can sample the data accuractly    
+	
+#### Hardware:  
+2 x Arduino Nano  
+2 x HC-05 Bluetooth Transceivers  
+1 x N64 Console  
+1 x N64 Controller with wires exposed  
 
+#### High Level System Operation:  
+_Detailed information about the N64 communication protocol can be found in references at the bottom of this document. To be brief, it is a single wire communication protocol similar to 1-wire._  
+
+
+This is what the high level of the prototype looks like:   
+
+
+![High Level Diagram][high_level_system]  
+
+
+Here I will describe the high level operation of the system.   
+Every 15ms **Arduino Nano 1** sends a single byte command to the **N64 controller** to request the current state of the buttons and joystick. The **N64 controller** responds with this information (called button data in the diagram) put in 4 bytes of data. I then encode the button data slightly so that each of the bytes can be uniquely identified. Although this increases the data size to 6 bytes, it is an important step since it is possible for bytes to be dropped on the receiving end at **Arduino Nano 2**. Once the button data is encoded, they are sent serially using the USART chip on the Nano to **bluetooth transciever 1**. **Bluetooth transciever 2** receives the button data and spits it out by USART to **Arduino Nano 2**. 
 
 
 
 ---
 
-### ChangeLog
-**May 21st, 2019**  
--- Completed and tested functions for:  
-    -- Requesting controller data and reading it into memory  
-	-- Reading command bytes from the N64 and responding with appropriate response  
--- Moved functions that handle communication to a Beam64 library  
--- Set up two bluetooth modules (hc-05) as master and slave and confirmed data transfer works  
-
-**May 15th, 2019**  
--- Completed the assembly function to read an incoming byte  
--- Began work on a library to hold the functions for communicating with the controller and console  
--- Code is still very messy  
-
-**May 7th, 2019**  
--- Ordered three bluetooth transcievers for prototyping with arduino  
--- Wrote a more precise function for sending commands  
--- Began working on an assembly function to read incoming controller data  
-
-**April 28th, 2019:**  
--- Found a [potential microcomputer](http://www.ti.com/product/CC2541) with bluetooth 4 integrated into the system, plenty of chinese vendors selling it on aliexpress  
--- Discovered that the N64 controller protocol can be approximated with UART, will probably write assembly to do the pin polling instead  
-
-**April 11th, 2019:**  
--- Figured out how to read directly from the digital pin registers  
-
-**April 9th, 2019:**  
--- Digging into arduino source code to speed up function calls  
-
-**April 6th, 2019:**  
--- Added Arduino code for early testing of communication with N64 controller  
--- Able to send command byte 0x00 to controller  
--- Able to see that data is being sent back, still need latch it properly  
-
----  
-
-
-References
+####References
 
 [N64 Controller Protocol Info 1](http://afermiano.com/index.php/n64-controller-protocol)  
 [N64 Controller Protocol Info 2](https://kthompson.gitlab.io/2016/07/26/n64-controller-protocol.html)  
@@ -63,3 +43,4 @@ References
 [N64 Patent](https://patentimages.storage.googleapis.com/a0/db/08/11d1c70ea3e80b/US6454652.pdf)  
 [Controller Chip Pinout](https://bitbuilt.net/forums/index.php?threads/official-controller-chip-pinout.58/)   
 
+[high_level_system]: https://github.com/CamEmil/Beam64/raw/master/Diagrams/Exports/System_High_Level.png "High Level Diagram"  
