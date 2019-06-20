@@ -2,7 +2,10 @@
 ## Wireless N64 Controller Modification
 _**This project and document is a work in progress**_   
 Goal:  
-Permanently modify an N64 controller to wirelessly communicate with no significant impact due to latency  
+Permanently modify an N64 controller to support wireless communication with no significant impact caused by increased latency  
+
+### The N64 Controller Protocol  
+Here I will give a brief overview of the controller protocol, more Detailed information can be found in the references listed below.  
 
 
 ### Prototype 1 (complete)
@@ -35,7 +38,7 @@ Every 15ms **Arduino Nano 1** sends a single byte command to the **N64 controlle
 
 ---
 
-####References
+#### References  
 
 [N64 Controller Protocol Info 1](http://afermiano.com/index.php/n64-controller-protocol)  
 [N64 Controller Protocol Info 2](https://kthompson.gitlab.io/2016/07/26/n64-controller-protocol.html)  
