@@ -16,10 +16,6 @@ void setup()
 
 void loop()
 {
-	//dataByte1 = 0x01;
-	//dataByte2 = 0x02;
-	//dataByte3 = 0xFF;
-	//dataByte4 = 0xFF;
 	if (firstBoot) {
 		delay(2000);
 		firstBoot = false;
@@ -34,6 +30,7 @@ void loop()
 	contByte4 = beam64.readByte();
 	interrupts();
 
+	// Make each byte uniquely identifiable 
 	btByte1 = 0x90 | ((contByte1 >> 4) & 0x0F);
 	btByte2 = 0x80 | ((contByte1)	& 0x0F);
 	btByte3 = 0x70 | ((contByte2 >> 4) & 0x0F);
@@ -41,7 +38,7 @@ void loop()
 	btByte5 = contByte3 & 0xFE;
 	btByte6 = contByte4 | 0x01;
 
-	// Wait 250 ms then write to bluetooth by serial
+	// Wait 10 ms then write to bluetooth by serial
 	delay(10);
 	Serial.write(btByte1);
 	Serial.write(btByte2);
